@@ -3,7 +3,6 @@
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SimulationConfig } from '@/lib/types';
-import { useState } from 'react';
 
 interface ConfigPanelProps {
   config: SimulationConfig;

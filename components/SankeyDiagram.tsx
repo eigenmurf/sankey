@@ -3,9 +3,17 @@
 import { ResponsiveSankey } from '@nivo/sankey';
 import { SankeyData } from '@/lib/types';
 import { useState, useCallback, useMemo } from 'react';
+import { SankeyNodeDatum, SankeyLinkDatum, SankeyMouseHandler } from '@nivo/sankey';
 
 interface SankeyDiagramProps {
   data: SankeyData;
+}
+
+// Define types for node objects
+interface SankeyNodeObject {
+  id: string;
+  type: 'AVS' | 'Set' | 'Operator';
+  [key: string]: unknown;
 }
 
 // Helper function to make colors brighter
@@ -153,7 +161,7 @@ export function SankeyDiagram({ data }: SankeyDiagramProps) {
   }, [data, selectedNode, connectedNodes, connectedLinks]);
 
   // Custom tooltip that explains the functionality
-  const customTooltip = useCallback(({ node }: { node: any }) => (
+  const customTooltip = useCallback(({ node }: { node: SankeyNodeObject }) => (
     <div className="p-2">
       <strong>{node.type}: </strong>
       {node.id}
@@ -164,13 +172,16 @@ export function SankeyDiagram({ data }: SankeyDiagramProps) {
   ), []);
 
   // Handle node click
-  const handleNodeClick = useCallback((node: any) => {
-    if (selectedNode === node.id) {
+  const handleNodeClick: SankeyMouseHandler<any, any> = useCallback((data) => {
+    // Only handle node clicks (not link clicks)
+    if ('source' in data) return; // This is a link, not a node
+    
+    if (selectedNode === data.id) {
       // If clicking the same node, clear it
       setSelectedNode(null);
     } else {
       // Otherwise set it as the selected node
-      setSelectedNode(node.id);
+      setSelectedNode(data.id);
     }
   }, [selectedNode]);
 
